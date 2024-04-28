@@ -1,0 +1,22 @@
+Sub SendEmail()
+Dim OutApp as Object
+Dim OutMail as Object
+
+Set outApp = CreateObject("Outlook.Application")
+Set OutEmail = OutApp.CreateItem(0)
+
+With OutMail
+.To
+.Subject
+.Body
+.Attachments
+.Display
+End With
+
+Set OutApp = Nothing
+Set OutMail = Nothing
+
+End Sub
+
+
+
