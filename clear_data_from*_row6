@@ -1,0 +1,9 @@
+Sub ClearContent()
+
+Answer = MsgBox("Confirm you want to clear?", vbYesNo)
+If Answer = vbYea Then
+Rows ("6:" & Rows.Count).ClearContents
+Else
+Exit Sub
+End If
+End sub
