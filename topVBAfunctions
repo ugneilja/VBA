@@ -1,0 +1,35 @@
+--Message Box
+Sub Hello World()
+
+MsgBox "Hello World"
+
+End Sub
+
+--Inputbox
+Sub HelloName()
+Name = Inputbox("What is your name?")
+MsgBox "Hello! & Name"
+End Sub
+
+--Join function
+Sub HelloName()
+Name = Inputbox("What is your name?")
+
+MsgBox Join(Array("Hello", Name), ", ")
+End Sub
+
+--Left function
+Sub HelloName()
+Name = Inputbox("What is your name?")
+FancyName = Left(UCase(Name) & Right(LCase(Name), Len(Name) - 1)
+MsgBox Join(Array("Hello", FancyName), ", ")
+End Sub
+
+
+--IsNumeric
+Sub AddSheets()
+NumbertoAdd = Inputbox("How many sheets should we add?")
+If Isnumeric(NumbertoAdd) and NumbertoAdd <> 0 Then
+Sheets.Add Count:NumbertoAdd
+End If
+End Sub
