@@ -70,3 +70,129 @@ End Sub
 Sub QuitIt()
 Application.Quit
 End Sub
+
+
+---Create a macro that copies data from one sheet to another and formats the copied data.
+Data in "Sheet1" (Range A1:D10) should be copied to "Sheet2".
+Apply bold formatting to the headers in "Sheet2".
+
+Sub CopyAndFormatData()
+    ' Copy data from Sheet1 to Sheet2
+    Sheets("Sheet1").Range("A1:D10").Copy Destination:=Sheets("Sheet2").Range("A1")
+    
+    ' Apply bold formatting to the headers in Sheet2
+    Sheets("Sheet2").Range("A1:D1").Font.Bold = True
+End Sub
+
+--Create a VBA macro to perform data analysis and generate a summary report.
+Instructions:
+Analyze a dataset in "Sheet1" that contains sales data with columns: Date, Product, Quantity, and Price.
+Calculate total sales for each product and display the summary in "Sheet2" with columns: Product, Total Sales.
+Ensure the macro handles dynamic data ranges.
+
+Sub GenerateSalesSummary()
+    Dim wsData As Worksheet
+    Dim wsSummary As Worksheet
+    Dim lastRow As Long
+    Dim product As String
+    Dim dict As Object
+    Dim i As Long
+    
+    Set wsData = Sheets("Sheet1")
+    Set wsSummary = Sheets("Sheet2")
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    ' Find the last row with data in Sheet1
+    lastRow = wsData.Cells(wsData.Rows.Count, "A").End(xlUp).Row
+    
+    ' Loop through the data and calculate total sales for each product
+    For i = 2 To lastRow
+        product = wsData.Cells(i, 2).Value
+        If Not dict.exists(product) Then
+            dict.Add product, wsData.Cells(i, 3).Value * wsData.Cells(i, 4).Value
+        Else
+            dict(product) = dict(product) + (wsData.Cells(i, 3).Value * wsData.Cells(i, 4).Value)
+        End If
+    Next i
+    
+    ' Output the summary to Sheet2
+    wsSummary.Cells.Clear
+    wsSummary.Range("A1").Value = "Product"
+    wsSummary.Range("B1").Value = "Total Sales"
+    
+    i = 2
+    For Each product In dict.Keys
+        wsSummary.Cells(i, 1).Value = product
+        wsSummary.Cells(i, 2).Value = dict(product)
+        i = i + 1
+    Next product
+    
+    ' Format the summary table
+    wsSummary.Range("A1:B1").Font.Bold = True
+    wsSummary.Columns("A:B").AutoFit
+End Sub
+
+
+--Objective: Develop a complex VBA macro that involves user interaction and advanced data manipulation.
+Instructions:
+Create a user form that allows the user to select a date range and a product category.
+Based on user input, filter the data in "Sheet1" and generate a report in "Sheet2".
+Include error handling to manage invalid inputs.
+
+Private Sub CommandButton1_Click()
+    Dim startDate As Date
+    Dim endDate As Date
+    Dim category As String
+    Dim wsData As Worksheet
+    Dim wsReport As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+    Dim rowCounter As Long
+    
+    On Error GoTo ErrorHandler
+    
+    ' Get user input
+    startDate = CDate(Me.TextBox1.Value)
+    endDate = CDate(Me.TextBox2.Value)
+    category = Me.ComboBox1.Value
+    
+    Set wsData = Sheets("Sheet1")
+    Set wsReport = Sheets("Sheet2")
+    
+    ' Find the last row with data in Sheet1
+    lastRow = wsData.Cells(wsData.Rows.Count, "A").End(xlUp).Row
+    
+    ' Clear previous report
+    wsReport.Cells.Clear
+    
+    ' Generate the report header
+    wsReport.Range("A1").Value = "Date"
+    wsReport.Range("B1").Value = "Product"
+    wsReport.Range("C1").Value = "Quantity"
+    wsReport.Range("D1").Value = "Price"
+    wsReport.Range("E1").Value = "Total"
+    wsReport.Range("A1:E1").Font.Bold = True
+    
+    rowCounter = 2
+    
+    ' Filter data based on user input
+    For i = 2 To lastRow
+        If wsData.Cells(i, 1).Value >= startDate And wsData.Cells(i, 1).Value <= endDate And wsData.Cells(i, 2).Value = category Then
+            wsReport.Cells(rowCounter, 1).Value = wsData.Cells(i, 1).Value
+            wsReport.Cells(rowCounter, 2).Value = wsData.Cells(i, 2).Value
+            wsReport.Cells(rowCounter, 3).Value = wsData.Cells(i, 3).Value
+            wsReport.Cells(rowCounter, 4).Value = wsData.Cells(i, 4).Value
+            wsReport.Cells(rowCounter, 5).Value = wsData.Cells(i, 3).Value * wsData.Cells(i, 4).Value
+            rowCounter = rowCounter + 1
+        End If
+    Next i
+    
+    ' Format the report table
+    wsReport.Columns("A:E").AutoFit
+
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Invalid input. Please check the dates and category.", vbExclamation
+End Sub
+
